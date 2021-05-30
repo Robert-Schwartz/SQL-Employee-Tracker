@@ -7,7 +7,7 @@ const db = require("./db/connection");
 // ==============================================
 db.connect((err) => {
     if (err) throw err;
-    console.log("Database connected.");
+    console.log(` "${db.config.database}" Database connected.`);
     init();
 });
 
@@ -28,6 +28,7 @@ function init() {
                     "View All Roles",
                     "View All Employees",
                     "Update Employee Role",
+                    "Update Employee Manager",
                     "Exit",
                 ],
             },
@@ -44,16 +45,22 @@ function init() {
                     addEmployee();
                     break;
                 case "View All Departments":
-                    viewDepartment();
+                    let viewDepartment = "department";
+                    viewTable(viewDepartment);
                     break;
                 case "View All Roles":
-                    viewRole();
+                    let viewRoles = "roles";
+                    viewTable(viewRoles);
                     break;
                 case "View All Employees":
-                    viewEmployee();
+                    let viewEmployee= "employee"
+                    viewTable(viewEmployee);
                     break;
                 case "Update Employee Role":
                     updateEmployeeRole();
+                    break;
+                case "Update Employee Manager":
+                    updateEmployeeManager();
                     break;
                 case "Delete Departments":
                     deleteDepartments();
@@ -72,16 +79,17 @@ function init() {
         });
 }
 
-// View Departments
+// View Options
 // ==============================================
-function viewDepartments() {
-    const sql = `SELECT * FROM department`;
+// view tables using values sent from prompt switches
+function viewTable(view) {
+    const sql = `SELECT * FROM ${view}`;
     db.query(sql, (err, rows) => {
         if (err) throw err;
         console.table(rows);
         init();
     });
-}
+};
 
 // Add Department
 // ==============================================
