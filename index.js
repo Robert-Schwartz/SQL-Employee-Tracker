@@ -3,6 +3,7 @@ const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const db = require("./db/connection");
 
+
 // Start SQL server after DB connection
 // ==============================================
 db.connect((err) => {
@@ -11,7 +12,7 @@ db.connect((err) => {
     init();
 });
 
-// init prompts switch case
+// Init prompts switch case
 // ==============================================
 function init() {
     inquirer
@@ -36,7 +37,7 @@ function init() {
         .then((answers) => {
             switch (answers.options) {
                 case "Add A Department":
-                    addDepartment();
+                    addDepartments();
                     break;
                 case "Add A Role":
                     addRole();
@@ -53,7 +54,7 @@ function init() {
                     viewTable(viewRoles);
                     break;
                 case "View All Employees":
-                    let viewEmployee= "employee"
+                    let viewEmployee = "employee"
                     viewTable(viewEmployee);
                     break;
                 case "Update Employee Role":
@@ -91,8 +92,10 @@ function viewTable(view) {
     });
 };
 
-// Add Department
+// Add Functions
 // ==============================================
+
+// Add Department name to Department Table
 function addDepartments() {
     inquirer
         .prompt([
@@ -100,15 +103,83 @@ function addDepartments() {
                 type: "input",
                 message: "What is the department name",
                 name: "department",
-            },
-        ])
+                validate: nameInput => {
+                    if (nameInput) {
+                        return true;
+                    } else {
+                        console.log('Please Provide an Answer')
+                        return false;
+                    }
+                }
+            }])
         .then((data) => {
             const sql = `INSERT INTO department (name) VALUES (?)`;
             const params = [data.department];
+            //run query to add department into department table
+            db.query(sql, params, (err, rows) => {
+                if (err) throw err;
+                console.log(`Success! - added ${params} to Department Table`);
+                init();
+            });
+        });
+}
+// Add Role name to Roles Table
+function addRole() {
+    // pull active department name array and store in empty array
+    // activeDepartment array will be used as choices for ROLE department prompts
+    let activeDepartment = [];
+    db.query("SELECT * FROM department", (err,data) => {
+        if (err) throw err;
+        for (let j=0; j < data.length; j++) {
+            activeDepartment.push(data[j]).name;
+        }
+    });
+
+
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                message: "What is the Title for the Role?",
+                name: "title",
+                validate: nameInput => {
+                    if (nameInput) {
+                        return true;
+                    } else {
+                        console.log('Please Provide an Answer')
+                        return false;
+                    }
+                }
+            },
+            {
+                type: "input",
+                message: "What is the Salary of for that Role?",
+                name: "salary",
+                validate: nameInput => {
+                    if (nameInput) {
+                        return true;
+                    } else {
+                        console.log('Please Provide an Answer')
+                        return false;
+                    }
+                }
+            },
+            {
+                type: "list",
+                message: "What Department does the Role belong to?",
+                name: "department",
+                choices: activeDepartment
+            },
+        ])
+        .then((data) => {
+
+            const sql = `INSERT INTO roles (title, salary,department_Id) VALUES (?,?,?)`;
+            const params = [data.title, data.salary, data.id];
+            //TODO: need to change null above to department_Id value from department table
 
             db.query(sql, params, (err, rows) => {
                 if (err) throw err;
-                console.log(`Success! - added ${rows}`);
+                console.log(`Success! - added ${params} to Role Table`);
                 init();
             });
         });
