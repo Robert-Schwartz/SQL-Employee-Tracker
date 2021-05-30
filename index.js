@@ -11,7 +11,7 @@ db.connect((err) => {
     init();
 });
 
-// Init prompts switch case
+// Init prompts switch cases
 //* ==================================================
 function init() {
     inquirer
@@ -122,7 +122,7 @@ function addDepartments() {
             });
         });
 }
-// Add Role name to Roles Table
+//! Add Role name to Roles Table
 function addRole() {
     // pull active department name array and store in empty array
     // activeDepartment array will be used as choices for ROLE department prompts
