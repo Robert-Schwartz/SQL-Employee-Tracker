@@ -194,7 +194,22 @@ function addEmployee() {
     db.query("SELECT * FROM roles", (err, data) => {
         if (err) throw err;
         for (let j = 0; j < data.length; j++) {
-            activeRoles.push({ name: data[j].title, value: data[j].id });;
+            activeRoles.push({
+                name: data[j].title,
+                value: data[j].id
+            });;
+        }
+    });
+
+    //pull out employee manager options from employee table
+    let activeEmployees = [];
+    db.query("SELECT * FROM employee", (err, data) => {
+        if (err) throw err;
+        for (let j = 0; j < data.length; j++) {
+            activeEmployees.push({
+                name: data[j].first_name + " " + data[j].last_name,
+                value: data[j].id
+            });;
         }
     });
 
@@ -232,13 +247,20 @@ function addEmployee() {
                 name: "role",
                 choices: activeRoles,
             },
+            {
+                type: "list",
+                message: "Who is the Employee's manager?",
+                name: "manager",
+                choices: activeEmployees,
+            },
         ])
         .then((data) => {
 
             // create variables with prompt answers
-            const ID = parseInt(data.role);
-            const sql = `INSERT INTO employee (first_name,last_name,role_id) VALUES (?,?,?)`;
-            const params = [data.first_name,data.last_name, ID];
+            const role_id = parseInt(data.role);
+            const manager_id = parseInt(data.manager);
+            const sql = `INSERT INTO employee (first_name,last_name,role_id,manager_id) VALUES (?,?,?,?)`;
+            const params = [data.first_name, data.last_name, role_id, manager_id];
 
             // query to add params using variables above
             db.query(sql, params, (err, rows) => {
