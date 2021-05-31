@@ -126,67 +126,67 @@ function addDepartments() {
 function addRole() {
     // pull active department name array and store in empty array
     // activeDepartment array will be used as choices for ROLE department prompts
-    let activeDepartment = [];
-    db.query("SELECT * FROM department", (err, data) => {
-        if (err) throw err;
-        for (let j = 0; j < data.length; j++) {
-            activeDepartment.push(data[j].name);
-        }
-    });
-
-    inquirer
-        .prompt([
-            {
-                type: "input",
-                message: "What is the Title for the Role?",
-                name: "title",
-                validate: (nameInput) => {
-                    if (nameInput) {
-                        return true;
-                    } else {
-                        console.log("Please Provide an Answer");
-                        return false;
+        db.query(`SELECT * FROM department`, (err, rows) => {
+            // we want access to the information in this table so we will run inquirer in this call back function
+            if (err) throw err;
+            const activeDeps = rows.map(x => x.dep_name)
+            inquirer
+                .prompt([
+                    {
+                        type: "input",
+                        message: "What is the title of the role you want to add?",
+                        name: "title",
+                        validate: nameInput => {
+                            if (nameInput) {
+                                return true;
+                            } else {
+                                console.log('You must Answer!!!');
+                                return false;
+                            }
+                        }
+                    },
+                    {
+                        type: "input",
+                        message: "What is the salary of this role?",
+                        name: "salary",
+                        validate: nameInput => {
+                            if (nameInput) {
+                                return true;
+                            } else {
+                                console.log('You must Answer!!!');
+                                return false;
+                            }
+                        }
+                    },
+                    {
+                        type: "list",
+                        message: "What depatment is your role in?",
+                        name: "department",
+                        choices: activeDeps
                     }
-                },
-            },
-            {
-                type: "input",
-                message: "What is the Salary of for that Role?",
-                name: "salary",
-                validate: (nameInput) => {
-                    if (nameInput) {
-                        return true;
-                    } else {
-                        console.log("Please Provide an Answer");
-                        return false;
+                ])
+                .then(answers => {
+                    // grab department and us that to return the id in the same row
+                    const department = answers.department;
+                    let depId;
+                    // FOR/OF LOOP: loops through the values of an iterable array
+                    for (const row of rows) {
+                        if (row.dep_name === department) {
+                            depId = row.id;
+                        }
                     }
-                },
-            },
-            {
-                type: "list",
-                message: "What Department does the Role belong to?",
-                name: "department",
-                choices: activeDepartment,
-            },
-        ])
-        .then((data) => {
 
-            // create variables with prompt answers
-            const salary = parseInt(data.salary)
-            const sql = `INSERT INTO roles (title, salary,department_Id) VALUES (?,?,?)`;
-            const params = [data.title, salary, id];
+                    //answers.salary is a sting we need to turn it into a number
+                    const salary = parseInt(answers.salary)
 
-            db.query(`SELECT ${data.department} FROM department`, (err, depName) => {
-                console.log(`depName: ${depName}`);
-                if (err) throw err;
-            });
+                    const sql = `INSERT INTO emp_role (title, salary, department_id) VALUES (?,?,?);`
+                    const params = [answers.title, salary, depId]
 
-
-
-            db.query(sql, params, (err, rows) => {
-                if (err) throw err;
-                console.log(`Success! - added ${params} to Role Table`);
-                init();
-            });
+                    db.query(sql, params, (err, rows) => {
+                        if (err) throw err;
+                        console.log('Success');
+                        trackEmp();
+                    })
+                });
         });
-}
+    };
