@@ -174,19 +174,76 @@ function addRole() {
             // create variables with prompt answers
             const ID = parseInt(data.department);
             const salary = parseInt(data.salary);
-            const sql = `INSERT INTO roles (title, salary,department_Id) VALUES (?,?,?)`;
+            const sql = `INSERT INTO roles (title, salary,department_id) VALUES (?,?,?)`;
             const params = [data.title, salary, ID];
 
-            db.query(`SELECT ${data.department} FROM department`, (err, depName) => {
-                console.log(`depName: ${depName}`);
-                if (err) throw err;
-            });
-
-
-
+            // query to add params using variables above
             db.query(sql, params, (err, rows) => {
                 if (err) throw err;
                 console.log(`Success! - added ${params} to Role Table`);
+                init();
+            });
+        });
+};
+
+// Add Employee name to Employee Table
+function addEmployee() {
+    // pull active department name and ID and store in empty array
+    // activeDepartment array will be used as choices for Employee department prompts
+    let activeRoles = [];
+    db.query("SELECT * FROM roles", (err, data) => {
+        if (err) throw err;
+        for (let j = 0; j < data.length; j++) {
+            activeRoles.push({ name: data[j].title, value: data[j].id });;
+        }
+    });
+
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                message: "What is the employee's First Name?",
+                name: "first_name",
+                validate: (nameInput) => {
+                    if (nameInput) {
+                        return true;
+                    } else {
+                        console.log("Please Provide an Answer");
+                        return false;
+                    }
+                },
+            },
+            {
+                type: "input",
+                message: "What is the employee's Last Name??",
+                name: "last_name",
+                validate: (nameInput) => {
+                    if (nameInput) {
+                        return true;
+                    } else {
+                        console.log("Please Provide an Answer");
+                        return false;
+                    }
+                },
+            },
+            {
+                type: "list",
+                message: "What is the Employee's role?",
+                name: "role",
+                choices: activeRoles,
+            },
+        ])
+        .then((data) => {
+
+            // create variables with prompt answers
+            const ID = parseInt(data.role);
+            const sql = `INSERT INTO employee (first_name,last_name,role_id) VALUES (?,?,?)`;
+            const params = [data.first_name,data.last_name, ID];
+
+            // query to add params using variables above
+            db.query(sql, params, (err, rows) => {
+                if (err) throw err;
+                console.log(`Success! - added ${params} to Employee Table`);
                 init();
             });
         });
