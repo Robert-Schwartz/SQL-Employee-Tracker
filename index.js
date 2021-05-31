@@ -130,7 +130,7 @@ function addRole() {
     db.query("SELECT * FROM department", (err, data) => {
         if (err) throw err;
         for (let j = 0; j < data.length; j++) {
-            activeDepartment.push(data[j].name);
+            activeDepartment.push({ name: data[j].name, value: data[j].id });;
         }
     });
 
@@ -172,9 +172,10 @@ function addRole() {
         .then((data) => {
 
             // create variables with prompt answers
-            const salary = parseInt(data.salary)
+            const ID = parseInt(data.department);
+            const salary = parseInt(data.salary);
             const sql = `INSERT INTO roles (title, salary,department_Id) VALUES (?,?,?)`;
-            const params = [data.title, salary, id];
+            const params = [data.title, salary, ID];
 
             db.query(`SELECT ${data.department} FROM department`, (err, depName) => {
                 console.log(`depName: ${depName}`);
