@@ -3,8 +3,8 @@ const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const db = require("./db/connection");
 
-// Start SQL server after DB connection
-//* ===================================================
+// Start SQL after DB connection
+// ===================================================
 db.connect((err) => {
     if (err) throw err;
     console.log(` "${db.config.database}" Database connected.`);
@@ -12,7 +12,7 @@ db.connect((err) => {
 });
 
 // Init prompts switch cases
-//* ==================================================
+// ==================================================
 function init() {
     inquirer
         .prompt([
@@ -28,8 +28,8 @@ function init() {
                     "View All Roles",
                     "View All Employees",
                     "Update Employee Role",
-                    "Update Employee Manager",
-                    "Exit",
+                    // "Update Employee Manager",
+                    "Quit",
                 ],
             },
         ])
@@ -77,10 +77,10 @@ function init() {
                     break;
             }
         });
-}
+};
 
-// View Options
-//* ===================================================
+// View Functions
+// ===================================================
 // view tables using values sent from prompt switches
 function viewTable(view) {
     const sql = `SELECT * FROM ${view}`;
@@ -89,10 +89,69 @@ function viewTable(view) {
         console.table(rows);
         init();
     });
-}
+};
 
+// Update Functions
+// ====================================================
+// update Employee Role
+function updateEmployeeRole() {
+    // activeEmployees will provide employee name options for prompt
+
+    // activeDepartment array will be used as choices for Employee department prompts
+    let activeRoles = [];
+    db.query("SELECT * FROM roles", (err, data) => {
+        if (err) throw err;
+        for (let j = 0; j < data.length; j++) {
+            activeRoles.push({
+                name: data[j].title,
+                value: data[j].id
+            });;
+        }
+    });
+    // activeEmployees will provide employee name options for prompt
+    let currentEmployees = [];
+    db.query("SELECT * FROM employee", (err, data) => {
+        if (err) throw err;
+        for (let k = 0; k < data.length; k++) {
+            currentEmployees.push({
+                name: data[k].first_name + " " + data[k].last_name,
+                value: data[k].id
+            });;
+        }
+    });
+
+    inquirer
+        .prompt([
+            {
+                type: "list",
+                message: "Which employee would you like to update?",
+                name: "employee",
+                choices: currentEmployees,
+            },
+            {
+                type: "list",
+                message: "What is the employee's new Role?",
+                name: "roles",
+                choices: activeRoles,
+            },
+        ])
+        .then((data) => {
+            // create variables with prompt answers
+            const role_id = parseInt(data.roles);
+            const employee_id = parseInt(data.employee);
+            const sql = `UPDATE employee SET role_id = ? Where id = ? `;
+            const params = [role_id, employee_id];
+
+            // query to add params using variables above
+            db.query(sql, params, (err, rows) => {
+                if (err) throw err;
+                console.log(`Success! - added ${params} to Employee Table`);
+                init();
+            });
+        });
+};
 // Add Functions
-//* ===================================================
+// ===================================================
 // Add Department name to Department Table
 function addDepartments() {
     inquirer
@@ -121,7 +180,7 @@ function addDepartments() {
                 init();
             });
         });
-}
+};
 // Add Role name to Roles Table
 function addRole() {
     // pull active department name array and store in empty array
@@ -185,7 +244,6 @@ function addRole() {
             });
         });
 };
-
 // Add Employee name to Employee Table
 function addEmployee() {
     // pull active department name and ID and store in empty array
@@ -201,7 +259,7 @@ function addEmployee() {
         }
     });
 
-    //pull out employee manager options from employee table
+    //pull out employee names from employee table to assign as manager
     let activeEmployees = [];
     db.query("SELECT * FROM employee", (err, data) => {
         if (err) throw err;
@@ -255,7 +313,6 @@ function addEmployee() {
             },
         ])
         .then((data) => {
-
             // create variables with prompt answers
             const role_id = parseInt(data.role);
             const manager_id = parseInt(data.manager);
@@ -269,4 +326,4 @@ function addEmployee() {
                 init();
             });
         });
-}
+};
