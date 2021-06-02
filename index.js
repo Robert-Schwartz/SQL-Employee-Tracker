@@ -3,7 +3,7 @@ const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const db = require("./db/connection");
 
-// Start SQL after DB connection
+// Connect Database
 // ===================================================
 db.connect((err) => {
     if (err) throw err;
@@ -57,10 +57,14 @@ function init() {
                     viewTable(viewEmployee);
                     break;
                 case "Update Employee Role":
-                    updateEmployeeRole();
+                    let dataType = 'emp_role';
+                    let dataColum = 'role_id'
+                    updateEmployeeRole(dataType, dataColum);
                     break;
                 case "Update Employee Manager":
-                    updateEmployeeManager();
+                    let dataType2 = 'employee'
+                    let dataColum2 = 'manager_id'
+                    updateEmployeeManager(dataType2, dataColum2);
                     break;
                 case "Delete Departments":
                     deleteDepartments();
@@ -105,7 +109,7 @@ function updateEmployeeRole() {
             activeRoles.push({
                 name: data[j].title,
                 value: data[j].id
-            });;
+            });
         }
     });
     // activeEmployees will provide employee name options for prompt

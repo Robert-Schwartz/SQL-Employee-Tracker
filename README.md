@@ -41,8 +41,8 @@ THEN I am prompted to select an employee to update and their new role and this i
 
 # TODO:
 
-## update employee role
-- need to figure out how to bring in full employee names and ID's to
+## Update Employee
+- can't figure out function for this
 
 ## View all Employees
 - need to figure out how to join tables correctly to view all information.
