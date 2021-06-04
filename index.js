@@ -28,8 +28,6 @@ function init() {
                     "View All Roles",
                     "View All Employees",
                     "Update Employee Role",
-                    // "Update Employee Manager",
-                    "Quit",
                 ],
             },
         ])
@@ -56,6 +54,9 @@ function init() {
                     let viewEmployee = "employee";
                     viewTable(viewEmployee);
                     break;
+                case "View All":
+                    viewAll();
+                    break;
                 case "Update Employee Role":
                     let dataType = 'emp_role';
                     let dataColum = 'role_id'
@@ -76,6 +77,7 @@ function init() {
                     deleteEmployees();
                     break;
                 case "Quit":
+                    quit();
                     break;
                 default:
                     break;
@@ -88,6 +90,17 @@ function init() {
 // view tables using values sent from prompt switches
 function viewTable(view) {
     const sql = `SELECT * FROM ${view}`;
+    db.query(sql, (err, rows) => {
+        if (err) throw err;
+        console.table(rows);
+        init();
+    });
+};
+
+// View full Table
+function viewAll() {
+    const sql = `SELECT * FROM employee
+    INNER JOIN roles ON roles.title, roles.salary, roles.department_id;`
     db.query(sql, (err, rows) => {
         if (err) throw err;
         console.table(rows);
