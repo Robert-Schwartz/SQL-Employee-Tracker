@@ -169,9 +169,9 @@ function updateEmployeeRole() {
                 });
         });
     });
-    // activeEmployees will provide employee name options for prompt
-
 };
+
+
 // Add Functions
 // ===================================================
 // Add Department name to Department Table
