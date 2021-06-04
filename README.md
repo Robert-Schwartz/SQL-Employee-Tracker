@@ -1,47 +1,59 @@
-# SQL-Employee-Tracker
-a command-line application to manage a company's employee database, using Node.js, Inquirer, and MySQL.
+# MYSql Employee Tracker
 
-GIVEN a command-line application that accepts user input
+An application using Node.JS and inquire to manage a database on employee data.
 
-WHEN I start the application
-THEN I am presented with the following options: view all departments, view all roles, view all employees,
-add a department, add a role, add an employee, and update an employee role
--Complete
+Video Walk-through Available at: https://drive.google.com/file/d/1RFD5I1cr4GsGRvd8W8mKSuyKvdYfYNVk/view
+
+[GitHub Repo](https://github.com/Robert-Schwartz/SQL-Employee-Tracker)
+
+## Description
+an Employee database created with MySQL and manipulated using command line prompts through node.js and inquirer.
+
+### User Story
+
+AS A business owner:
+I WANT to be able to view and manage the departments, roles, and employees in my company SO THAT I can organize and plan my business
 
 
-WHEN I choose to view all departments
-THEN I am presented with a formatted table showing department names and department ids
--Complete
+## Table of Contents
 
-WHEN I choose to view all roles
-THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
--Complete
+- [Technologies](#Technologies)
+- [Installation](#Installation)
+- [Usage](#Usage)
+- [Contributions](#Contributions)
+- [Contact](#Contact)
+- [License](#license)
 
-WHEN I choose to view all employees
-THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names, job titles, departments, salaries,
-and managers that the employees report to
--partially complete.  Missing title, department, salary
--TODO:  Add a JOIN
+## Technologies
 
-WHEN I choose to add a department
-THEN I am prompted to enter the name of the department and that department is added to the database
--Complete
+This project was built using
 
-WHEN I choose to add a role
-THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
--Complete
+- Javascript,
+- node.js, npm inquirer
+- MySQL 2
+- console.table
+## Installation
 
-WHEN I choose to add an employee
-THEN I am prompted to enter the employee’s first name, last name, role, and manager and that employee is added to the database
--Complete
 
-WHEN I choose to update an employee role
-THEN I am prompted to select an employee to update and their new role and this information is updated in the database
-- TODO: can't figure out how to bring in full employee names and ID's to
+* Navigate to the [index.js](index.js) file and run `npm install` in your terminal.
+* Make sure to download the following npm dependencies by running `npm install`
+    * inquirer
+    * mysql 2
+    * console.table
+## Usage
+* Be sure to modify the [connection.js](connection.js) file to include your MySQL user/password information.
+* Open a new Terminal or command line session from the root directory
+* Type `npm start` in the command line to start
+* `Follow the prompts` using your arrow keys to make your selection
 
-# TODO:
 
-## View all Employees
-- need to figure out how to join tables correctly to view all information.
-    - missing title, department, salary
+![preview](preview.png)
 
+## Contributions
+
+
+Robert Schwartz
+
+## License
+
+No Licenses required

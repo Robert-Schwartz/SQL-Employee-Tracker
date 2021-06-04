@@ -14,6 +14,11 @@ db.connect((err) => {
 // Init prompts switch cases
 // ==================================================
 function init() {
+    console.log(`
+        ==================
+        Employee Tracker!
+        ==================
+    `);
     inquirer
         .prompt([
             {
