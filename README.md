@@ -2,7 +2,7 @@
 
 An application using Node.JS and inquire to manage a database on employee data.
 
-Video Walk-through Available at: https://drive.google.com/file/d/1RFD5I1cr4GsGRvd8W8mKSuyKvdYfYNVk/view
+Video Walk-through Available at: https://drive.google.com/file/d/1IONksnTCoQls8bXwyjJdsI3BjOIAVRIA/view
 
 [GitHub Repo](https://github.com/Robert-Schwartz/SQL-Employee-Tracker)
 

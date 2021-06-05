@@ -8,10 +8,10 @@ VALUES
 
 INSERT INTO roles (title, salary, department_id)
 VALUES
-("Coach", 25500, 1),
-("Guard", 50000, 1),
-("Forward", 30000, 1),
-("Center", 40000, 2);
+("Coach", 5000000, 1),
+("Guard", 3000000, 1),
+("Forward", 7000000, 1),
+("Center", 15000000, 1);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES

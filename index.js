@@ -15,9 +15,11 @@ db.connect((err) => {
 // ==================================================
 function init() {
     console.log(`
-        ==================
-        Employee Tracker!
-        ==================
+        ==========================
+
+            Employee Tracker!
+
+        ==========================
     `);
     inquirer
         .prompt([
@@ -48,19 +50,13 @@ function init() {
                     addEmployee();
                     break;
                 case "View All Departments":
-                    let viewDepartment = "department";
-                    viewTable(viewDepartment);
+                    viewDepartment();
                     break;
                 case "View All Roles":
-                    let viewRoles = "roles";
-                    viewTable(viewRoles);
+                    viewRoles();
                     break;
                 case "View All Employees":
-                    let viewEmployee = "employee";
-                    viewTable(viewEmployee);
-                    break;
-                case "View All":
-                    viewAll();
+                    viewEmployee();
                     break;
                 case "Update Employee Role":
                     let dataType = 'emp_role';
@@ -92,26 +88,64 @@ function init() {
 
 // View Functions
 // ===================================================
-// view tables using values sent from prompt switches
-function viewTable(view) {
-    const sql = `SELECT * FROM ${view}`;
+// view Employee Table
+function viewEmployee() {
+    console.log(`
+        ==================
+        View Employees!
+        ==================
+    `)
+    const sql = `
+    SELECT *
+    FROM employee
+    LEFT JOIN roles
+    ON employee.role_id = roles.id
+    LEFT JOIN department
+    ON employee.id = department.id;`;
     db.query(sql, (err, rows) => {
         if (err) throw err;
         console.table(rows);
         init();
     });
-};
+}
 
-// View full Table
-function viewAll() {
-    const sql = `SELECT * FROM employee
-    INNER JOIN roles ON roles.title, roles.salary, roles.department_id;`
+// view Roles Table
+function viewRoles() {
+    console.log(`
+        ==================
+            View Roles!
+        ==================
+    `)
+    const sql = `
+    SELECT *
+    FROM roles
+    LEFT JOIN employee
+    ON employee.id = roles.id;`;
     db.query(sql, (err, rows) => {
         if (err) throw err;
         console.table(rows);
         init();
     });
-};
+}
+
+// view Department Table
+function viewDepartment() {
+    console.log(`
+        ==================
+        View Departments!
+        ==================
+    `)
+    const sql = `
+    SELECT *
+    FROM department`;
+    db.query(sql, (err, rows) => {
+        if (err) throw err;
+        console.table(rows);
+        init();
+    });
+}
+
+
 
 // Update Functions
 // ====================================================
@@ -163,7 +197,11 @@ function updateEmployeeRole() {
                     // query to add params using variables above
                     db.query(sql, params, (err, rows) => {
                         if (err) throw err;
-                        console.log(`Success! - added ${params} to Employee Table`);
+                        console.log(`
+                        ============================================
+                        Success! - added ${params} to Employee Table
+                        ============================================
+                        `);
                         init();
                     });
                 });
@@ -198,7 +236,11 @@ function addDepartments() {
             // run query to add department into department table
             db.query(sql, params, (err, rows) => {
                 if (err) throw err;
-                console.log(`Success! - added ${params} to Department Table`);
+                console.log(`
+                        ==============================================
+                        Success! - added ${params} to Department Table
+                        ==============================================
+                        `);
                 init();
             });
         });
@@ -261,7 +303,11 @@ function addRole() {
             // query to add params using variables above
             db.query(sql, params, (err, rows) => {
                 if (err) throw err;
-                console.log(`Success! - added ${params} to Role Table`);
+                console.log(`
+                        ============================================
+                        Success! - added ${params} to the Role Table
+                        ============================================
+                        `);
                 init();
             });
         });
@@ -341,7 +387,11 @@ function addEmployee() {
                 // query to add params using variables above
                 db.query(sql, params, (err, rows) => {
                     if (err) throw err;
-                    console.log(`Success! - added ${params} to Employee Table`);
+                    console.log(`
+                        ============================================
+                        Success! - added ${params} to Employee Table
+                        ============================================
+                        `);
                     init();
                 });
             });
