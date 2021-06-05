@@ -2,6 +2,7 @@ const cTable = require("console.table");
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const db = require("./db/connection");
+const util = require('util');
 
 // Connect Database
 // ===================================================
@@ -10,6 +11,8 @@ db.connect((err) => {
     console.log(` "${db.config.database}" Database connected.`);
     init();
 });
+
+db.query = util.promisify(db.query);
 
 // Init prompts switch cases
 // ==================================================
@@ -129,7 +132,7 @@ function viewRoles() {
 }
 
 // view Department Table
-function viewDepartment() {
+async function viewDepartment() {
     console.log(`
         ==================
         View Departments!
@@ -138,11 +141,9 @@ function viewDepartment() {
     const sql = `
     SELECT *
     FROM department`;
-    db.query(sql, (err, rows) => {
-        if (err) throw err;
-        console.table(rows);
-        init();
-    });
+    const results = await db.query(sql);
+    console.table(results);
+    init();
 }
 
 
@@ -150,63 +151,57 @@ function viewDepartment() {
 // Update Functions
 // ====================================================
 // update Employee Role
-function updateEmployeeRole() {
+async function updateEmployeeRole() {
     // activeEmployees will provide employee name options for prompt
 
     // activeDepartment array will be used as choices for Employee department prompts
-    let activeRoles = [];
-    db.query("SELECT * FROM roles", (err, data) => {
-        if (err) throw err;
-        for (let j = 0; j < data.length; j++) {
-            activeRoles.push({
-                name: data[j].title,
-                value: data[j].id
-            });
-        }
-        let currentEmployees = [];
-        db.query("SELECT * FROM employee", (err, data) => {
-            if (err) throw err;
-            for (let k = 0; k < data.length; k++) {
-                currentEmployees.push({
-                    name: data[k].first_name + " " + data[k].last_name,
-                    value: data[k].id
-                });;
-            }
-            inquirer
-                .prompt([
-                    {
-                        type: "list",
-                        message: "Which employee would you like to update?",
-                        name: "employee",
-                        choices: currentEmployees,
-                    },
-                    {
-                        type: "list",
-                        message: "What is the employee's new Role?",
-                        name: "roles",
-                        choices: activeRoles,
-                    },
-                ])
-                .then((data) => {
-                    // create variables with prompt answers
-                    const role_id = parseInt(data.roles);
-                    const employee_id = parseInt(data.employee);
-                    const sql = `UPDATE employee SET role_id = ? Where id = ? `;
-                    const params = [role_id, employee_id];
+    const roleQuery = await db.query("SELECT * FROM roles");
+    // console.log(roleQuery);
+    let activeRoles = roleQuery.map(i => ({
+        name: i.title,
+        value: i.id
+    }));
+    // console.log(activeRoles);
 
-                    // query to add params using variables above
-                    db.query(sql, params, (err, rows) => {
-                        if (err) throw err;
-                        console.log(`
+    const employeeQuery = await db.query("SELECT * FROM employee");
+    let currentEmployees = employeeQuery.map(i => ({
+        name: i.first_name + " " + i.last_name,
+        value: i.id
+    }));
+    // console.log(currentEmployees);
+    inquirer
+        .prompt([
+            {
+                type: "list",
+                message: "Which employee would you like to update?",
+                name: "employee",
+                choices: currentEmployees,
+            },
+            {
+                type: "list",
+                message: "What is the employee's new Role?",
+                name: "roles",
+                choices: activeRoles,
+            },
+        ])
+        .then((data) => {
+            // create variables with prompt answers
+            const role_id = parseInt(data.roles);
+            const employee_id = parseInt(data.employee);
+            const sql = `UPDATE employee SET role_id = ? Where id = ? `;
+            const params = [role_id, employee_id];
+
+            // query to add params using variables above
+            db.query(sql, params, (err, rows) => {
+                if (err) throw err;
+                console.log(`
                         ============================================
                         Success! - added ${params} to Employee Table
                         ============================================
                         `);
-                        init();
-                    });
-                });
+                init();
+            });
         });
-    });
 };
 
 
