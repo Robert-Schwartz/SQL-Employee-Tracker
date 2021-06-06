@@ -152,23 +152,21 @@ async function viewDepartment() {
 // ====================================================
 // update Employee Role
 async function updateEmployeeRole() {
-    // activeEmployees will provide employee name options for prompt
-
-    // activeDepartment array will be used as choices for Employee department prompts
+    // wait for the DB query to run before setting activeRoles Array
     const roleQuery = await db.query("SELECT * FROM roles");
-    // console.log(roleQuery);
+    // activeRoles will pull all titles and Ids to use in inquirer
     let activeRoles = roleQuery.map(i => ({
         name: i.title,
         value: i.id
     }));
-    // console.log(activeRoles);
 
     const employeeQuery = await db.query("SELECT * FROM employee");
+    // activeRoles will pull all titles and Ids to use in inquirer
     let currentEmployees = employeeQuery.map(i => ({
         name: i.first_name + " " + i.last_name,
         value: i.id
     }));
-    // console.log(currentEmployees);
+
     inquirer
         .prompt([
             {
